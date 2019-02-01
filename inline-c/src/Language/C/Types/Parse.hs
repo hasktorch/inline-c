@@ -233,7 +233,7 @@ cIdentStart :: [Char]
 cIdentStart = ['a'..'z'] ++ ['A'..'Z'] ++ ['_']
 
 cIdentLetter :: [Char]
-cIdentLetter = ['a'..'z'] ++ ['A'..'Z'] ++ ['_'] ++ ['0'..'9']
+cIdentLetter = ['a'..'z'] ++ ['A'..'Z'] ++ ['_'] ++ ['0'..'9'] ++ [':', '<', '>']
 
 cIdentStyle :: (TokenParsing m, Monad m) => IdentifierStyle m
 cIdentStyle = IdentifierStyle

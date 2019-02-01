@@ -1,18 +1,30 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 import           Control.Exception.Safe
 import           Control.Monad
 import qualified Language.C.Inline.Cpp as C
+import qualified Language.C.Inline.Context as CC
+import qualified Language.C.Types as CT
 import qualified Language.C.Inline.Cpp.Exceptions as C
 import qualified Test.Hspec as Hspec
+import           Foreign.Ptr (Ptr)
 import           Data.List (isInfixOf)
 
-C.context C.cppCtx
+data Test
+data VectorInt
+
+C.context $ C.cppCtx <> C.cppTypePairs [
+  ("Test::Test", [t|Test|]),
+  ("std::vector<int>", [t|VectorInt|])
+  ]
 
 C.include "<iostream>"
+C.include "<vector>"
 C.include "<stdexcept>"
+C.include "test.h"
 
 main :: IO ()
 main = Hspec.hspec $ do
@@ -21,6 +33,24 @@ main = Hspec.hspec $ do
       let x = 3
       [C.block| void {
           std::cout << "Hello, world!" << $(int x) << std::endl;
+        } |]
+
+  Hspec.describe "C++ Types" $ do
+    Hspec.it "Hello Namespace" $ do
+      pt <- [C.block| Test::Test* {
+          return new Test::Test();
+        } |] :: IO (Ptr Test)
+      [C.block| void {
+          std::cout << $(Test::Test* pt)->get() << std::endl;
+        } |]
+
+    Hspec.it "Hello Template" $ do
+      pt <- [C.block| std::vector<int>* {
+          return new std::vector<int>();
+        } |] :: IO (Ptr VectorInt)
+      [C.block| void {
+          $(std::vector<int>* pt)->push_back(100);
+          std::cout << (*$(std::vector<int>* pt))[0] << std::endl;
         } |]
 
   Hspec.describe "Exception handling" $ do
