@@ -279,6 +279,7 @@ storage_class_specifier = msum
 
 data TypeSpecifier
   = VOID
+  | BOOL
   | CHAR
   | SHORT
   | INT
@@ -295,6 +296,7 @@ data TypeSpecifier
 type_specifier :: CParser i m => m TypeSpecifier
 type_specifier = msum
   [ VOID <$ reserve cIdentStyle "void"
+  , BOOL <$ reserve cIdentStyle "bool"
   , CHAR <$ reserve cIdentStyle "char"
   , SHORT <$ reserve cIdentStyle "short"
   , INT <$ reserve cIdentStyle "int"
@@ -511,6 +513,7 @@ instance Pretty StorageClassSpecifier where
 instance Pretty TypeSpecifier where
   pretty tySpec = case tySpec of
    VOID -> "void"
+   BOOL -> "bool"
    CHAR -> "char"
    SHORT -> "short"
    INT -> "int"
