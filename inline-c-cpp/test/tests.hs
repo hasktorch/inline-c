@@ -16,7 +16,7 @@ import           Data.List (isInfixOf)
 data Test
 data VectorInt
 
-C.context $ C.cppCtx <> C.cppTypePairs [
+C.context $ C.cppCtx `mappend` C.cppTypePairs [
   ("Test::Test", [t|Test|]),
   ("std::vector<int>", [t|VectorInt|])
   ]
