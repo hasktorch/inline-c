@@ -755,9 +755,10 @@ cppIdentParser s = identParser
     cidentParserWithNamespace =
       try (concat <$> sequence [cidentParser, (string "::"), cidentParserWithNamespace]) <|>
       cidentParser
+    templateArgType = try identParser <|> (many $ oneOf ['0'..'9'])
     templateArgParser =
-      try (concat <$> sequence [identParser, (string ","), templateArgParser]) <|>
-      cidentParser
+      try (concat <$> sequence [templateArgType, (string ","), templateArgParser]) <|>
+      templateArgType
 
 
 identNoLex :: (TokenParsing m, Monad m, IsString s) => IdentifierStyle m -> m s
