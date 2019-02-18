@@ -216,3 +216,11 @@ main = Hspec.hspec $ do
         [C.exp| void { $(void (*fp)(int *))($(int *x_ptr)) } |]
         x <- peek x_ptr
         x `Hspec.shouldBe` 42
+    Hspec.it "cpp namespace identifiers" $ do
+      C.cIdentifierFromString "Test::Test"  `Hspec.shouldBe`  Right "Test::Test"
+    Hspec.it "cpp template identifiers" $ do
+      C.cIdentifierFromString "Test::Test<bool,bool>"  `Hspec.shouldBe`  Right "Test::Test<bool,bool>"
+    Hspec.it "cpp template identifiers" $ do
+      C.cIdentifierFromString "std::vector<int>"  `Hspec.shouldBe`  Right "std::vector<int>"
+    Hspec.it "broken cpp template identifiers" $ do
+      C.cIdentifierFromString "Test::Test<bool"  `Hspec.shouldBe` Left "\"cIdentifierFromString\" (line 1, column 11):\nunexpected '<'\nexpecting end of input"

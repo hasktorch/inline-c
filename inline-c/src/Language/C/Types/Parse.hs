@@ -233,7 +233,7 @@ cIdentStart :: [Char]
 cIdentStart = ['a'..'z'] ++ ['A'..'Z'] ++ ['_']
 
 cIdentLetter :: [Char]
-cIdentLetter = ['a'..'z'] ++ ['A'..'Z'] ++ ['_'] ++ ['0'..'9'] ++ [':', '<', '>', ',']
+cIdentLetter = ['a'..'z'] ++ ['A'..'Z'] ++ ['_'] ++ ['0'..'9']
 
 cIdentStyle :: (TokenParsing m, Monad m) => IdentifierStyle m
 cIdentStyle = IdentifierStyle
@@ -348,7 +348,7 @@ cidentifier = token cidentifier_no_lex
 
 type_name :: CParser i m => m CIdentifier
 type_name = try $ do
-  s <- ident cIdentStyle <?> "type name"
+  s <- ident' cIdentStyle <?> "type name"
   typeNames <- asks cpcTypeNames
   unless (HashSet.member s typeNames) $
     unexpected $ "identifier  " ++ unCIdentifier s
@@ -746,9 +746,28 @@ many1 p = (:) <$> p <*> many p
 -- Utils
 ------------------------------------------------------------------------
 
+cppIdentParser s = identParser
+  where
+    identParser =
+      try (concat <$> sequence [cidentParserWithNamespace, (string "<"), templateArgParser, (string ">")]) <|>
+      cidentParserWithNamespace
+    cidentParser = ((:) <$> _styleStart s <*> many (_styleLetter s) <?> _styleName s)
+    cidentParserWithNamespace =
+      try (concat <$> sequence [cidentParser, (string "::"), cidentParserWithNamespace]) <|>
+      cidentParser
+    templateArgParser =
+      try (concat <$> sequence [identParser, (string ","), templateArgParser]) <|>
+      cidentParser
+
+
 identNoLex :: (TokenParsing m, Monad m, IsString s) => IdentifierStyle m -> m s
 identNoLex s = fmap fromString $ try $ do
-  name <- highlight (_styleHighlight s)
-          ((:) <$> _styleStart s <*> many (_styleLetter s) <?> _styleName s)
+  name <- highlight (_styleHighlight s) (cppIdentParser s)
+  when (HashSet.member name (_styleReserved s)) $ unexpected $ "reserved " ++ _styleName s ++ " " ++ show name
+  return name
+
+ident' :: (TokenParsing m, Monad m, IsString s) => IdentifierStyle m -> m s
+ident' s = fmap fromString $ token $ try $ do
+  name <- highlight (_styleHighlight s) (cppIdentParser s)
   when (HashSet.member name (_styleReserved s)) $ unexpected $ "reserved " ++ _styleName s ++ " " ++ show name
   return name
