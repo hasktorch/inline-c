@@ -1,0 +1,25 @@
+name: stack-macos
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup repo
+      run: |
+        git submodule init && git submodule update
+    - name: Setup tool-chains
+      run: |
+        wget -qO- https://get.haskellstack.org/ | sh || true
+        clang --version
+        stack --version
+    - name: Build
+      run: |
+        #. setenv
+        stack build --stack-yaml stack-nightly-2020-10-11.yaml
+    - name: Test
+      run: |
+        #. setenv
+        stack test --stack-yaml stack-nightly-2020-10-11.yaml
