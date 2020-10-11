@@ -36,8 +36,8 @@ library
   include-dirs:        include
   install-includes:    HaskellException.hxx HaskellStablePtr.hxx
   extra-libraries:     stdc++
-  c-sources:           cxx-src/HaskellException.cxx cxx-src/HaskellStablePtr.cxx
-  cc-options:          -Wall -std=c++11
+  cxx-sources:         cxx-src/HaskellException.cxx cxx-src/HaskellStablePtr.cxx
+  cxx-options:         -Wall -std=c++11
   if os(darwin)
     -- avoid https://gitlab.haskell.org/ghc/ghc/issues/11829
     ld-options:        -Wl,-keep_dwarf_unwind
@@ -62,6 +62,6 @@ test-suite tests
   if os(darwin)
     ghc-options: -pgmc=clang++
   extra-libraries:     stdc++
-  cc-options:          -Wall -Werror -optc-xc++ -std=c++11
+  cxx-options:         -Wall -Werror -optcxx-xc++ -std=c++11
   if os(darwin)
     ld-options: -Wl,-keep_dwarf_unwind
