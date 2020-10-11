@@ -41,7 +41,6 @@ library
   if os(darwin)
     -- avoid https://gitlab.haskell.org/ghc/ghc/issues/11829
     ld-options:        -Wl,-keep_dwarf_unwind
-    ghc-options:       -pgmc=clang++
 
 test-suite tests
   type:                exitcode-stdio-1.0
@@ -59,8 +58,6 @@ test-suite tests
   default-language:    Haskell2010
   ghc-options:
     -optcxx-std=c++11
-  if os(darwin)
-    ghc-options: -pgmc=clang++
   extra-libraries:     stdc++
   cxx-options:         -Wall -Werror -optcxx-xc++ -std=c++11
   if os(darwin)
