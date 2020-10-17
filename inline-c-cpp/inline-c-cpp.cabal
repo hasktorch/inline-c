@@ -32,7 +32,7 @@ library
                      , containers
   hs-source-dirs:      src
   default-language:    Haskell2010
-  ghc-options:         -Wall -optcxx-xc++ -optcxx-std=c++11
+  ghc-options:         -Wall -optcxx-xc++ -optcxx-std=c++11 -optc-xc++ -optc-std=c++11
   include-dirs:        include
   install-includes:    HaskellException.hxx HaskellStablePtr.hxx
   extra-libraries:     stdc++
@@ -57,7 +57,7 @@ test-suite tests
                      , vector
   default-language:    Haskell2010
   ghc-options:
-    -optcxx-std=c++11
+    -optcxx-xc++ -optcxx-std=c++11 -optc-xc++ -optc-std=c++11
   extra-libraries:     stdc++
   cxx-options:         -Wall -Werror -optcxx-xc++ -std=c++11
   if os(darwin)
