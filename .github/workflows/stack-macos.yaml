@@ -15,13 +15,13 @@ jobs:
         wget -qO- https://get.haskellstack.org/ | sh || true
         clang --version
         stack --version
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
     - name: Build
       run: |
         #. setenv
-        stack build --stack-yaml stack-nightly-2020-10-11.yaml
+        stack build --stack-yaml stack-nightly-2020-10-11.yaml --cabal-verbose
     - name: Test
       run: |
         #. setenv
-        stack test --stack-yaml stack-nightly-2020-10-11.yaml
+        stack test --stack-yaml stack-nightly-2020-10-11.yaml --cabal-verbose
